@@ -14,12 +14,18 @@ async def start_message(message: types.Message):
     await bot.send_message(message.from_user.id, 'Дрочкоин кафй', reply_markup=main_keyboard)
 
 
+@dp.callback_query_handler(lambda query: query.data == 'balance_check')
+async def balance_check(callback_query: types.CallbackQuery):
+    balance = db_helper.balance_check(callback_query.from_user.id)
+    await bot.send_message(callback_query.from_user.id, f'у вас осталось {balance} дрочкоинов🤪🤫👀😋')
+
+
 class DRC_manipulation(StatesGroup):
     add = State()
     remove = State()
 
 @dp.callback_query_handler(lambda query: query.data.startswith('change_balance'))
-async def manipulate_drochcoin_wallet(callback_query: types.CallbackQuery):
+async def change_balance(callback_query: types.CallbackQuery):
     if callback_query.data.split(':')[1] == 'add':
         await bot.send_message(callback_query.from_user.id, 'сколько дрочкоинов добавить?')
         await DRC_manipulation.add.set()

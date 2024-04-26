@@ -15,15 +15,28 @@ def create_db():
     con.close()
 
 
-def add_user(user_id):
-    con = sq.connect('drochcoin.db')
-    cur = con.cursor()
-
+def add_user(user_id, cur):
     command = f'INSERT INTO wallets (user_id, balance) VALUES ({user_id}, 0)'
     cur.execute(command)
 
-    con.commit()
+
+def balance_check(user_id):
+    con = sq.connect('drochcoin.db')
+    cur = con.cursor()
+
+    command = f'SELECT balance FROM wallets WHERE user_id={user_id}'
+    cur.execute(command)
+
+    balance = cur.fetchone()
+
+    if balance == None: 
+        add_user(user_id, cur)
+        balance = (0, )
+        con.commit()
+
     con.close()
+
+    return balance[0]
 
 
 def manipulate_wallet(user_id, count, add_or_nah):
@@ -36,7 +49,7 @@ def manipulate_wallet(user_id, count, add_or_nah):
     balance = cur.fetchone()
 
     if balance == None: 
-        add_user(user_id)
+        add_user(user_id, cur)
         balance = (0, )
 
     if add_or_nah:
