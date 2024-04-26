@@ -42,7 +42,7 @@ async def add_drochcoin(message: types.Message, state: FSMContext):
         await bot.send_message(message.from_user.id, 'иди нахуй')
     await state.finish()
 
-@dp.message_handler(state=DRC_manipulation.add)
+@dp.message_handler(state=DRC_manipulation.remove)
 async def remove_drochcoin(message: types.Message, state: FSMContext):
     if message.text.isdigit():
         db_helper.manipulate_wallet(message.from_user.id, message.text, False)
